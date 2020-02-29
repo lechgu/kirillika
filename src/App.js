@@ -6,6 +6,7 @@ const App = () => {
 
   const [translit, setTranslit] = useState("");
   const [cyrillic, setCyrillic] = useState("");
+  const [autoCopy, setAutoCopy] = useState(true);
 
   const t2c = new Map([
     ["a", "а"],
@@ -48,6 +49,16 @@ const App = () => {
     ["ja", "я"],
     ["j+o", "йо"]
   ]);
+
+  const copyToClipboard = s => {
+    navigator.permissions.query({ name: "clipboard-write" }).then(result => {
+      if (result.state == "granted") {
+        if (autoCopy) {
+          navigator.clipboard.writeText(s);
+        }
+      }
+    });
+  };
 
   const tryMatchPrefix = (s, len) => {
     let matched = false;
@@ -111,11 +122,17 @@ const App = () => {
     const value = e.target.value;
     if (name === "translit") {
       setTranslit(value);
-      setCyrillic(translitToCyrillic(value));
+      const translated = translitToCyrillic(value);
+      setCyrillic(translated);
+      copyToClipboard(translated);
     } else {
       setCyrillic(value);
       setTranslit(cyrillcToTranslit(value));
     }
+  };
+
+  const handleAutoCopy = e => {
+    setAutoCopy(!autoCopy);
   };
 
   return (
@@ -139,6 +156,18 @@ const App = () => {
               placeholder="Cyrillic will appear here"
               defaultValue={cyrillic}
             />
+          </div>
+          <div className="custom-control custom-checkbox mt-2">
+            <input
+              type="checkbox"
+              className="custom-control-input"
+              id="auto-copy"
+              checked={autoCopy}
+              onChange={handleAutoCopy}
+            />
+            <label className="custom-control-label" htmlFor="auto-copy">
+              Automatically place the Cyrillic text on the clipboard
+            </label>
           </div>
         </div>
       </div>
