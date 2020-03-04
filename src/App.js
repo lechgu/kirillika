@@ -157,7 +157,8 @@ const App = () => {
               name="cyrillic"
               className="form-control"
               placeholder="Cyrillic will appear here"
-              defaultValue={cyrillic}
+              value={cyrillic}
+              onChange={e => {}}
             />
           </div>
           <div className="custom-control custom-checkbox mt-2">
