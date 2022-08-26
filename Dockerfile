@@ -2,13 +2,12 @@ FROM node:alpine AS build
 
 WORKDIR /app
 
+ENV NODE_OPTIONS=--openssl-legacy-provider
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-FROM lechgu/dab
+FROM nginx:alpine
 
-COPY --from=build /app/build/ /html/
-
-ENV DIR=/html
+COPY --from=build /app/build/ /usr/share/nginx/html/
